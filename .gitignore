@@ -44,6 +44,17 @@ model_artifacts/
 saved_models/
 checkpoints/
 
+# Specific model checkpoint patterns
+best_model_*.h5
+best_*_model_*.h5
+model_checkpoint_*.h5
+checkpoint_*.h5
+
+# Training artifacts
+training_history.json
+model_metrics.json
+tensorboard_logs/
+
 # ============================================================================
 # LOGS AND OUTPUTS - GENERATED CONTENT
 # ============================================================================

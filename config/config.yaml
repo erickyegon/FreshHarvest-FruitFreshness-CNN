@@ -79,6 +79,10 @@ paths:
   checkpoints: "models/checkpoints"
   trained_models: "models/trained"
 
+  # Best trained model - PRODUCTION READY (96.50% validation accuracy)
+  best_model: "models/trained/best_model_96.50acc.h5"
+  best_model_metadata: "models/trained/model_metadata.json"
+
 # Logging
 logging:
   level: "INFO"

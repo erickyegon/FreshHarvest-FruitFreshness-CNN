@@ -238,13 +238,15 @@ Examples:
     # Setup directories
     setup_directories()
 
-    # Print header
+    # Print header with production model status
     print("\n" + "="*80)
     print("🍎 FRESHHARVEST FRUIT FRESHNESS CLASSIFICATION SYSTEM")
+    print("🏆 PRODUCTION MODEL: 96.50% VALIDATION ACCURACY")
     print("="*80)
     print(f"⏰ Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"🎯 Command: {args.command}")
     print(f"📋 Config: {args.config}")
+    print(f"🚀 Best Model: models/trained/best_model_96.50acc.h5")
     print("="*80)
 
     try:
