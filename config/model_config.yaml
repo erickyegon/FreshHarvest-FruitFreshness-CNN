@@ -1,0 +1,194 @@
+# FreshHarvest Model Configuration
+# Comprehensive model architecture and hyperparameter settings
+
+# Model Architecture
+architecture:
+  # Model type
+  type: "custom_cnn"  # Options: custom_cnn, transfer_learning, ensemble
+
+  # Input specifications
+  input_shape: [224, 224, 3]
+  num_classes: 16
+
+  # Model variants
+  variants:
+    basic:
+      description: "Basic CNN with standard convolutions"
+      layers: 4
+      filters: [32, 64, 128, 256]
+      kernel_size: 3
+
+    improved:
+      description: "Improved CNN with ResNet-style blocks"
+      layers: 6
+      filters: [32, 64, 128, 256, 512, 1024]
+      kernel_size: 3
+      use_residual: true
+
+    lightweight:
+      description: "Lightweight CNN with separable convolutions"
+      layers: 4
+      filters: [32, 64, 128, 256]
+      kernel_size: 3
+      use_separable: true
+
+# CNN Architecture Details
+cnn_architecture:
+  # Convolutional layers
+  conv_layers:
+    # First block
+    block1:
+      filters: 32
+      kernel_size: [3, 3]
+      strides: [1, 1]
+      padding: "same"
+      activation: "relu"
+      batch_norm: true
+      dropout: 0.1
+
+    # Second block
+    block2:
+      filters: 64
+      kernel_size: [3, 3]
+      strides: [1, 1]
+      padding: "same"
+      activation: "relu"
+      batch_norm: true
+      dropout: 0.2
+
+    # Third block
+    block3:
+      filters: 128
+      kernel_size: [3, 3]
+      strides: [1, 1]
+      padding: "same"
+      activation: "relu"
+      batch_norm: true
+      dropout: 0.3
+
+    # Fourth block
+    block4:
+      filters: 256
+      kernel_size: [3, 3]
+      strides: [1, 1]
+      padding: "same"
+      activation: "relu"
+      batch_norm: true
+      dropout: 0.4
+
+  # Pooling layers
+  pooling:
+    type: "max"  # Options: max, average, global_average
+    pool_size: [2, 2]
+    strides: [2, 2]
+
+  # Dense layers
+  dense_layers:
+    hidden1:
+      units: 512
+      activation: "relu"
+      dropout: 0.5
+      batch_norm: true
+
+    hidden2:
+      units: 256
+      activation: "relu"
+      dropout: 0.5
+      batch_norm: true
+
+    output:
+      units: 16
+      activation: "softmax"
+
+# Transfer Learning
+transfer_learning:
+  # Base model options
+  base_models:
+    - "VGG16"
+    - "ResNet50"
+    - "InceptionV3"
+    - "MobileNetV2"
+    - "EfficientNetB0"
+
+  # Default base model
+  default_base: "MobileNetV2"
+
+  # Fine-tuning settings
+  fine_tuning:
+    freeze_base: true
+    unfreeze_layers: 10  # Number of top layers to unfreeze
+    fine_tune_learning_rate: 0.0001
+
+# Model Compilation
+compilation:
+  # Optimizer settings
+  optimizer:
+    type: "adam"
+    learning_rate: 0.001
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-07
+
+  # Loss function
+  loss:
+    type: "categorical_crossentropy"
+    label_smoothing: 0.1
+
+  # Metrics
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "top_3_accuracy"
+
+# Regularization
+regularization:
+  # Dropout
+  dropout:
+    conv_dropout: 0.1
+    dense_dropout: 0.5
+
+  # L1/L2 regularization
+  l1_reg: 0.0001
+  l2_reg: 0.0001
+
+  # Batch normalization
+  batch_norm:
+    momentum: 0.99
+    epsilon: 0.001
+
+  # Early stopping
+  early_stopping:
+    monitor: "val_loss"
+    patience: 10
+    restore_best_weights: true
+
+# Model Saving
+saving:
+  # Save format
+  format: "h5"  # Options: h5, savedmodel, tf
+
+  # Save best model
+  save_best_only: true
+  monitor: "val_accuracy"
+  mode: "max"
+
+  # Model versioning
+  versioning: true
+  version_format: "v{major}.{minor}.{patch}"
+
+# Model Evaluation
+evaluation:
+  # Metrics to track
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "confusion_matrix"
+    - "classification_report"
+
+  # Evaluation settings
+  batch_size: 32
+  verbose: 1

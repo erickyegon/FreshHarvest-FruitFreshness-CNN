@@ -1,0 +1,162 @@
+# FreshHarvest Data Configuration
+# Comprehensive data processing and augmentation settings
+
+# Data Paths
+data_paths:
+  raw_data: "data"
+  processed_data: "data/processed"
+  interim_data: "data/interim"
+  external_data: "data/external"
+
+  # Split directories
+  train_dir: "data/processed/train"
+  val_dir: "data/processed/val"
+  test_dir: "data/processed/test"
+
+# Dataset Configuration
+dataset:
+  # Split ratios
+  train_split: 0.7
+  val_split: 0.2
+  test_split: 0.1
+
+  # Random seed for reproducibility
+  random_seed: 42
+
+  # Minimum samples per class
+  min_samples_per_class: 50
+
+  # Maximum samples per class (for balancing)
+  max_samples_per_class: 1000
+
+# Image Processing
+image_processing:
+  # Target image dimensions
+  target_size: [224, 224]
+  channels: 3
+
+  # Color space
+  color_mode: "rgb"
+
+  # Normalization
+  rescale: 0.00392156862745098  # 1/255
+
+  # Image format
+  image_format: ["jpg", "jpeg", "png"]
+
+  # Quality checks
+  min_image_size: [32, 32]
+  max_image_size: [2048, 2048]
+
+# Data Augmentation
+data_augmentation:
+  # Training augmentation
+  training:
+    rotation_range: 20
+    width_shift_range: 0.2
+    height_shift_range: 0.2
+    shear_range: 0.2
+    zoom_range: 0.2
+    horizontal_flip: true
+    vertical_flip: false
+    brightness_range: [0.8, 1.2]
+    channel_shift_range: 0.1
+    fill_mode: "nearest"
+
+  # Validation augmentation (minimal)
+  validation:
+    rescale_only: true
+
+  # Test augmentation (none)
+  test:
+    rescale_only: true
+
+# Class Information
+classes:
+  # Fresh fruits
+  fresh:
+    - "F_Banana"
+    - "F_Lemon"
+    - "F_Lulo"
+    - "F_Mango"
+    - "F_Orange"
+    - "F_Strawberry"
+    - "F_Tamarillo"
+    - "F_Tomato"
+
+  # Spoiled fruits
+  spoiled:
+    - "S_Banana"
+    - "S_Lemon"
+    - "S_Lulo"
+    - "S_Mango"
+    - "S_Orange"
+    - "S_Strawberry"
+    - "S_Tamarillo"
+    - "S_Tomato"
+
+# Class mapping
+class_mapping:
+  F_Banana: 0
+  F_Lemon: 1
+  F_Lulo: 2
+  F_Mango: 3
+  F_Orange: 4
+  F_Strawberry: 5
+  F_Tamarillo: 6
+  F_Tomato: 7
+  S_Banana: 8
+  S_Lemon: 9
+  S_Lulo: 10
+  S_Mango: 11
+  S_Orange: 12
+  S_Strawberry: 13
+  S_Tamarillo: 14
+  S_Tomato: 15
+
+# Data Loading
+data_loading:
+  batch_size: 32
+  shuffle: true
+  num_workers: 4
+  pin_memory: true
+  drop_last: false
+
+  # Prefetch settings
+  prefetch_factor: 2
+  persistent_workers: true
+
+# Data Validation
+validation:
+  # Check for corrupted images
+  check_corrupted: true
+
+  # Check class balance
+  check_balance: true
+  balance_threshold: 0.1  # 10% difference allowed
+
+  # Check image quality
+  check_quality: true
+  min_quality_score: 0.5
+
+# Data Statistics
+statistics:
+  # Calculate dataset statistics
+  calculate_mean_std: true
+
+  # Image statistics
+  calculate_image_stats: true
+
+  # Class distribution
+  calculate_class_distribution: true
+
+# Export Settings
+export:
+  # Export processed data
+  export_processed: true
+
+  # Export statistics
+  export_stats: true
+
+  # Export format
+  export_format: "hdf5"  # or "tfrecord"

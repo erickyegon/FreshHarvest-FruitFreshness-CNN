@@ -1,0 +1,257 @@
+# FreshHarvest Deployment Configuration
+# Comprehensive deployment settings for production environments
+
+# Application Settings
+application:
+  name: "FreshHarvest"
+  version: "1.0.0"
+  description: "Fruit Freshness Classification API"
+
+  # Server configuration
+  server:
+    host: "0.0.0.0"
+    port: 8000
+    debug: false
+    workers: 4
+    timeout: 30
+    keepalive: 2
+
+  # API settings
+  api:
+    prefix: "/api/v1"
+    title: "FreshHarvest API"
+    description: "AI-powered fruit freshness classification service"
+    version: "1.0.0"
+    docs_url: "/docs"
+    redoc_url: "/redoc"
+    openapi_url: "/openapi.json"
+
+# Model Configuration
+model:
+  # Model paths
+  model_path: "models/trained/best_model.h5"
+  backup_model_path: "models/trained/backup_model.h5"
+
+  # Model loading
+  load_on_startup: true
+  lazy_loading: false
+
+  # Model caching
+  cache_model: true
+  cache_size: "1GB"
+
+  # Model versioning
+  version_tracking: true
+  model_registry: "models/registry"
+
+# Inference Settings
+inference:
+  # Batch processing
+  batch_size: 32
+  max_batch_size: 128
+  batch_timeout: 5.0  # seconds
+
+  # Image processing
+  image_size: [224, 224]
+  max_image_size: [2048, 2048]
+  supported_formats: ["jpg", "jpeg", "png", "bmp"]
+
+  # Performance
+  use_gpu: false
+  gpu_memory_limit: "2GB"
+  cpu_threads: 4
+
+  # Preprocessing
+  normalize: true
+  resize_method: "bilinear"
+
+# API Endpoints
+endpoints:
+  # Health check
+  health:
+    path: "/health"
+    method: "GET"
+
+  # Model info
+  model_info:
+    path: "/model/info"
+    method: "GET"
+
+  # Single prediction
+  predict:
+    path: "/predict"
+    method: "POST"
+    max_file_size: "10MB"
+
+  # Batch prediction
+  predict_batch:
+    path: "/predict/batch"
+    method: "POST"
+    max_files: 50
+    max_total_size: "100MB"
+
+  # Model metrics
+  metrics:
+    path: "/metrics"
+    method: "GET"
+
+# Security Settings
+security:
+  # Authentication
+  authentication:
+    enabled: false
+    method: "api_key"  # Options: api_key, jwt, oauth2
+
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 100
+    requests_per_hour: 1000
+
+  # CORS
+  cors:
+    enabled: true
+    allow_origins: ["*"]
+    allow_methods: ["GET", "POST"]
+    allow_headers: ["*"]
+
+  # Input validation
+  input_validation:
+    enabled: true
+    max_file_size: "10MB"
+    allowed_extensions: [".jpg", ".jpeg", ".png", ".bmp"]
+
+# Monitoring and Logging
+monitoring:
+  # Logging
+  logging:
+    level: "INFO"
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    file: "logs/deployment.log"
+    max_size: "100MB"
+    backup_count: 5
+
+  # Metrics collection
+  metrics:
+    enabled: true
+    endpoint: "/metrics"
+    include_system_metrics: true
+    include_model_metrics: true
+
+  # Health checks
+  health_checks:
+    enabled: true
+    interval: 30  # seconds
+    timeout: 5    # seconds
+
+  # Performance monitoring
+  performance:
+    track_latency: true
+    track_throughput: true
+    track_errors: true
+    alert_threshold: 5.0  # seconds
+
+# Docker Configuration
+docker:
+  # Base image
+  base_image: "python:3.9-slim"
+
+  # Container settings
+  container:
+    name: "freshharvest-api"
+    port: 8000
+    memory_limit: "2GB"
+    cpu_limit: "2"
+
+  # Environment variables
+  environment:
+    PYTHONPATH: "/app"
+    MODEL_PATH: "/app/models/trained/best_model.h5"
+    LOG_LEVEL: "INFO"
+
+  # Volumes
+  volumes:
+    - "./models:/app/models"
+    - "./logs:/app/logs"
+    - "./data:/app/data"
+
+# Cloud Deployment
+cloud:
+  # AWS settings
+  aws:
+    region: "us-east-1"
+    instance_type: "t3.medium"
+    auto_scaling:
+      min_instances: 1
+      max_instances: 5
+      target_cpu: 70
+
+  # Google Cloud settings
+  gcp:
+    region: "us-central1"
+    machine_type: "e2-medium"
+    auto_scaling:
+      min_instances: 1
+      max_instances: 5
+      target_cpu: 70
+
+  # Azure settings
+  azure:
+    region: "East US"
+    vm_size: "Standard_B2s"
+    auto_scaling:
+      min_instances: 1
+      max_instances: 5
+      target_cpu: 70
+
+# Database Configuration
+database:
+  # Prediction logging
+  prediction_logging:
+    enabled: true
+    database_url: "sqlite:///predictions.db"
+    table_name: "predictions"
+
+  # Model metrics
+  metrics_storage:
+    enabled: true
+    database_url: "sqlite:///metrics.db"
+    table_name: "metrics"
+
+# Caching
+caching:
+  # Redis configuration
+  redis:
+    enabled: false
+    host: "localhost"
+    port: 6379
+    db: 0
+    password: null
+
+  # In-memory caching
+  memory_cache:
+    enabled: true
+    max_size: "500MB"
+    ttl: 3600  # seconds
+
+# Load Balancing
+load_balancing:
+  enabled: false
+  algorithm: "round_robin"  # Options: round_robin, least_connections, ip_hash
+  health_check_interval: 30
+
+# Backup and Recovery
+backup:
+  # Model backup
+  model_backup:
+    enabled: true
+    interval: "daily"
+    retention_days: 30
+    backup_location: "backups/models"
+
+  # Data backup
+  data_backup:
+    enabled: true
+    interval: "weekly"
+    retention_weeks: 12
+    backup_location: "backups/data"

@@ -1,0 +1,502 @@
+# FreshHarvest .gitignore
+# ======================
+# Comprehensive gitignore for ML/AI projects with data protection
+
+# ============================================================================
+# DATA DIRECTORIES - NEVER COMMIT DATASETS
+# ============================================================================
+data/
+!data/.gitkeep
+!data/README.md
+
+# Raw data
+data/raw/
+data/external/
+data/interim/
+data/processed/
+
+# Sample data (if you want to keep small samples)
+# !data/samples/
+# data/samples/*.jpg
+# data/samples/*.png
+# !data/samples/README.md
+
+# ============================================================================
+# TRAINED MODELS AND CHECKPOINTS - TOO LARGE FOR GIT
+# ============================================================================
+models/trained/
+models/checkpoints/
+models/exports/
+*.h5
+*.hdf5
+*.keras
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.pb
+
+# Model artifacts
+model_artifacts/
+saved_models/
+checkpoints/
+
+# ============================================================================
+# LOGS AND OUTPUTS - GENERATED CONTENT
+# ============================================================================
+logs/
+*.log
+outputs/
+results/
+reports/generated/
+tensorboard_logs/
+mlruns/
+wandb/
+
+# Jupyter notebook outputs
+*.ipynb_checkpoints/
+.ipynb_checkpoints/
+
+# ============================================================================
+# SECRETS AND CONFIGURATION - SECURITY CRITICAL
+# ============================================================================
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+
+# API keys and secrets
+secrets/
+config/secrets.yaml
+config/secrets.json
+config/production.yaml
+config/staging.yaml
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Database credentials
+database.ini
+db_config.yaml
+connection_strings.txt
+
+# Cloud credentials
+credentials.json
+service-account.json
+aws-credentials
+gcp-credentials.json
+azure-credentials.json
+
+# ============================================================================
+# PYTHON SPECIFIC
+# ============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+fresh_env/
+conda_env/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# ============================================================================
+# IDE AND EDITOR FILES
+# ============================================================================
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# PyCharm
+.idea/
+*.swp
+*.swo
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ============================================================================
+# OPERATING SYSTEM FILES
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE_BIN/
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================================================
+# TEMPORARY AND CACHE FILES
+# ============================================================================
+*.tmp
+*.temp
+*.cache
+*.bak
+*.backup
+.cache/
+cache/
+tmp/
+temp/
+
+# ============================================================================
+# MACHINE LEARNING SPECIFIC
+# ============================================================================
+# MLflow
+mlruns/
+mlartifacts/
+
+# Weights & Biases
+wandb/
+
+# DVC (Data Version Control)
+.dvc/
+.dvcignore
+
+# Experiment tracking
+experiments/
+runs/
+
+# ============================================================================
+# LARGE FILES AND DATASETS
+# ============================================================================
+# Large files (>100MB typically)
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Video files
+*.mp4
+*.avi
+*.mov
+
+# Audio files
+*.mp3
+*.wav
+
+# ============================================================================
+# KEEP THESE FILES (WHITELIST)
+# ============================================================================
+# Documentation
+!README.md
+!LICENSE
+!docs/
+
+# Configuration templates
+!config/config.yaml.template
+!.env.example
+
+# Project structure
+!*/.gitkeep
+
+# ============================================================================
+# JUPYTER NOTEBOOKS - OPTIONAL CLEANING
+# ============================================================================
+# Uncomment if you want to ignore notebook outputs
+# *.ipynb
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# ============================================================================
+# IDE AND EDITOR FILES
+# ============================================================================
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# PyCharm
+.idea/
+*.swp
+*.swo
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*~
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ============================================================================
+# OPERATING SYSTEM FILES
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================================================
+# TEMPORARY AND CACHE FILES
+# ============================================================================
+# General temporary files
+*.tmp
+*.temp
+*.cache
+*.bak
+*.backup
+*.old
+*.orig
+
+# Cache directories
+.cache/
+cache/
+tmp/
+temp/
+
+# ============================================================================
+# DOCKER AND CONTAINERS
+# ============================================================================
+# Docker
+.dockerignore
+docker-compose.override.yml
+.docker/
+
+# ============================================================================
+# CLOUD AND DEPLOYMENT
+# ============================================================================
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes
+*.kubeconfig
+
+# Serverless
+.serverless/
+
+# ============================================================================
+# MACHINE LEARNING SPECIFIC
+# ============================================================================
+# MLflow
+mlruns/
+mlartifacts/
+
+# Weights & Biases
+wandb/
+
+# DVC (Data Version Control)
+.dvc/
+.dvcignore
+
+# Experiment tracking
+experiments/
+runs/
+
+# Model registries
+model_registry/
+
+# ============================================================================
+# LARGE FILES AND DATASETS
+# ============================================================================
+# Large files (>100MB typically)
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.iso
+*.dmg
+
+# Video files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.flv
+*.wmv
+
+# Audio files
+*.mp3
+*.wav
+*.flac
+*.aac
+
+# Large images (keep small ones for documentation)
+# *.jpg
+# *.jpeg
+# *.png
+# *.gif
+# *.bmp
+# *.tiff
+
+# ============================================================================
+# PROJECT SPECIFIC EXCLUSIONS
+# ============================================================================
+# Add your project-specific files here
+# Example:
+# config/local_settings.py
+# scripts/private/
+# notebooks/experiments/
+
+# ============================================================================
+# KEEP THESE FILES (WHITELIST)
+# ============================================================================
+# Documentation
+!README.md
+!CHANGELOG.md
+!LICENSE
+!CONTRIBUTING.md
+!docs/
+
+# Configuration templates
+!config/config.yaml.template
+!config/example_config.yaml
+!.env.example
+
+# Sample scripts
+!scripts/examples/
+!notebooks/examples/
+
+# Project structure
+!*/.gitkeep

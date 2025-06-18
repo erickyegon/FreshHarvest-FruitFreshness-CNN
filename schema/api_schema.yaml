@@ -1,0 +1,194 @@
+# FreshHarvest API Schema
+# OpenAPI 3.0 specification for the FreshHarvest API
+
+openapi: 3.0.3
+info:
+  title: FreshHarvest API
+  description: AI-powered fruit freshness classification service
+  version: 1.0.0
+  contact:
+    name: FreshHarvest Team
+    email: support@freshharvest.ai
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.freshharvest.ai
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Check if the API service is running
+      operationId: health_check
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /model/info:
+    get:
+      summary: Get model information
+      description: Retrieve information about the loaded model
+      operationId: get_model_info
+      responses:
+        '200':
+          description: Model information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelInfo'
+
+  /predict:
+    post:
+      summary: Single image prediction
+      description: Classify freshness of a single fruit image
+      operationId: predict_single
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SinglePredictionRequest'
+      responses:
+        '200':
+          description: Prediction successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictionResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /predict/batch:
+    post:
+      summary: Batch image prediction
+      description: Classify freshness of multiple fruit images
+      operationId: predict_batch
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BatchPredictionRequest'
+      responses:
+        '200':
+          description: Batch prediction successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchPredictionResponse'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "healthy"
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: "1.0.0"
+
+    ModelInfo:
+      type: object
+      properties:
+        model_name:
+          type: string
+          example: "FreshHarvest CNN"
+        model_version:
+          type: string
+          example: "1.0.0"
+        input_shape:
+          type: array
+          items:
+            type: integer
+          example: [224, 224, 3]
+        num_classes:
+          type: integer
+          example: 16
+        classes:
+          type: array
+          items:
+            type: string
+          example: ["F_Banana", "F_Lemon", "S_Banana", "S_Lemon"]
+
+    SinglePredictionRequest:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+          description: Image file to classify
+
+    PredictionResponse:
+      type: object
+      properties:
+        prediction:
+          type: string
+          example: "F_Banana"
+        confidence:
+          type: number
+          format: float
+          example: 0.95
+        probabilities:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+        processing_time:
+          type: number
+          format: float
+          example: 0.123
+
+    BatchPredictionRequest:
+      type: object
+      properties:
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+
+    BatchPredictionResponse:
+      type: object
+      properties:
+        predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PredictionResponse'
+        total_processing_time:
+          type: number
+          format: float
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time

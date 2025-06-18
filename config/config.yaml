@@ -1,0 +1,90 @@
+# FreshHarvest Computer Vision Project Configuration
+
+# Project Information
+project:
+  name: "FreshHarvest_Fruit_Freshness_Classification"
+  version: "1.0.0"
+  description: "Computer vision solution for fruit freshness classification"
+  author: "FreshHarvest Team"
+
+# Data Configuration
+data:
+  raw_data_path: "data"
+  processed_data_path: "data/processed"
+  interim_data_path: "data/interim"
+  external_data_path: "data/external"
+
+  # Dataset splits
+  train_split: 0.7
+  val_split: 0.2
+  test_split: 0.1
+
+  # Image specifications
+  image_size: [224, 224]
+  channels: 3
+
+  # Classes
+  classes:
+    - "F_Banana"
+    - "F_Lemon"
+    - "F_Lulo"
+    - "F_Mango"
+    - "F_Orange"
+    - "F_Strawberry"
+    - "F_Tamarillo"
+    - "F_Tomato"
+    - "S_Banana"
+    - "S_Lemon"
+    - "S_Lulo"
+    - "S_Mango"
+    - "S_Orange"
+    - "S_Strawberry"
+    - "S_Tamarillo"
+    - "S_Tomato"
+
+  num_classes: 16
+
+# Model Configuration
+model:
+  architecture: "custom_cnn"
+  input_shape: [224, 224, 3]
+  num_classes: 16
+
+# Training Configuration
+training:
+  batch_size: 32
+  epochs: 50
+  learning_rate: 0.001
+  optimizer: "adam"
+  loss_function: "categorical_crossentropy"
+  metrics: ["accuracy", "precision", "recall", "f1_score"]
+
+  # Early stopping
+  early_stopping:
+    monitor: "val_loss"
+    patience: 10
+    restore_best_weights: true
+
+  # Model checkpointing
+  checkpoint:
+    monitor: "val_accuracy"
+    save_best_only: true
+    save_weights_only: false
+
+# Paths
+paths:
+  models: "models"
+  logs: "logs"
+  outputs: "outputs"
+  checkpoints: "models/checkpoints"
+  trained_models: "models/trained"
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Experiment Tracking
+experiment:
+  tracking_uri: "mlruns"
+  experiment_name: "FreshHarvest_Classification"

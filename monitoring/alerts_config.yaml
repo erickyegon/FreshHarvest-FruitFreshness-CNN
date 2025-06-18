@@ -1,0 +1,215 @@
+# FreshHarvest Monitoring Alerts Configuration
+# Comprehensive alerting rules for production monitoring
+
+# Alert Configuration
+alerts:
+  # Model Performance Alerts
+  model_performance:
+    # Accuracy degradation
+    accuracy_degradation:
+      enabled: true
+      threshold: 0.05  # 5% drop in accuracy
+      window: "1h"
+      severity: "warning"
+      description: "Model accuracy has dropped significantly"
+
+    # High error rate
+    high_error_rate:
+      enabled: true
+      threshold: 0.1  # 10% error rate
+      window: "15m"
+      severity: "critical"
+      description: "High prediction error rate detected"
+
+    # Low confidence predictions
+    low_confidence:
+      enabled: true
+      threshold: 0.7  # Below 70% confidence
+      percentage: 0.2  # 20% of predictions
+      window: "30m"
+      severity: "warning"
+      description: "High percentage of low confidence predictions"
+
+  # System Performance Alerts
+  system_performance:
+    # High response time
+    high_latency:
+      enabled: true
+      threshold: 5.0  # 5 seconds
+      window: "10m"
+      severity: "warning"
+      description: "API response time is too high"
+
+    # Memory usage
+    high_memory_usage:
+      enabled: true
+      threshold: 0.85  # 85% memory usage
+      window: "5m"
+      severity: "warning"
+      description: "High memory usage detected"
+
+    # CPU usage
+    high_cpu_usage:
+      enabled: true
+      threshold: 0.8  # 80% CPU usage
+      window: "10m"
+      severity: "warning"
+      description: "High CPU usage detected"
+
+    # Disk usage
+    high_disk_usage:
+      enabled: true
+      threshold: 0.9  # 90% disk usage
+      window: "1h"
+      severity: "critical"
+      description: "Disk space running low"
+
+  # Data Quality Alerts
+  data_quality:
+    # Data drift detection
+    data_drift:
+      enabled: true
+      threshold: 0.1  # 10% drift
+      window: "1d"
+      severity: "warning"
+      description: "Significant data drift detected"
+
+    # Unusual input patterns
+    unusual_inputs:
+      enabled: true
+      threshold: 0.05  # 5% unusual inputs
+      window: "1h"
+      severity: "info"
+      description: "Unusual input patterns detected"
+
+    # Missing data
+    missing_data:
+      enabled: true
+      threshold: 0.02  # 2% missing data
+      window: "30m"
+      severity: "warning"
+      description: "High rate of missing or corrupted data"
+
+  # Service Health Alerts
+  service_health:
+    # Service unavailable
+    service_down:
+      enabled: true
+      threshold: 1  # Any downtime
+      window: "1m"
+      severity: "critical"
+      description: "Service is unavailable"
+
+    # Health check failures
+    health_check_failure:
+      enabled: true
+      threshold: 3  # 3 consecutive failures
+      window: "5m"
+      severity: "critical"
+      description: "Health check failures detected"
+
+    # Model loading failures
+    model_load_failure:
+      enabled: true
+      threshold: 1  # Any failure
+      window: "1m"
+      severity: "critical"
+      description: "Model loading failed"
+
+# Notification Channels
+notification_channels:
+  # Email notifications
+  email:
+    enabled: true
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    username: "alerts@freshharvest.ai"
+    recipients:
+      - "team@freshharvest.ai"
+      - "ops@freshharvest.ai"
+
+  # Slack notifications
+  slack:
+    enabled: false
+    webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+    channel: "#alerts"
+
+  # PagerDuty integration
+  pagerduty:
+    enabled: false
+    integration_key: "YOUR_PAGERDUTY_INTEGRATION_KEY"
+
+  # Discord notifications
+  discord:
+    enabled: false
+    webhook_url: "https://discord.com/api/webhooks/YOUR/WEBHOOK"
+
+# Alert Rules
+alert_rules:
+  # Severity levels
+  severity_levels:
+    critical:
+      notify_immediately: true
+      escalate_after: "5m"
+      channels: ["email", "pagerduty"]
+
+    warning:
+      notify_immediately: false
+      escalate_after: "30m"
+      channels: ["email", "slack"]
+
+    info:
+      notify_immediately: false
+      escalate_after: "1h"
+      channels: ["slack"]
+
+  # Alert grouping
+  grouping:
+    enabled: true
+    group_by: ["service", "severity"]
+    group_wait: "10s"
+    group_interval: "5m"
+    repeat_interval: "1h"
+
+# Monitoring Metrics
+metrics:
+  # Model metrics
+  model_metrics:
+    - "prediction_accuracy"
+    - "prediction_latency"
+    - "prediction_confidence"
+    - "error_rate"
+
+  # System metrics
+  system_metrics:
+    - "cpu_usage"
+    - "memory_usage"
+    - "disk_usage"
+    - "network_io"
+
+  # Application metrics
+  application_metrics:
+    - "request_rate"
+    - "response_time"
+    - "error_count"
+    - "active_connections"
+
+# Dashboard Configuration
+dashboards:
+  # Main dashboard
+  main:
+    refresh_interval: "30s"
+    panels:
+      - "model_performance"
+      - "system_health"
+      - "request_metrics"
+      - "error_rates"
+
+  # Detailed model dashboard
+  model_details:
+    refresh_interval: "1m"
+    panels:
+      - "prediction_accuracy_trend"
+      - "confidence_distribution"
+      - "class_prediction_breakdown"
+      - "data_drift_metrics"

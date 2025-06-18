@@ -1,0 +1,211 @@
+# FreshHarvest Training Configuration
+# Comprehensive training settings and hyperparameters
+
+# Training Parameters
+training:
+  # Basic training settings
+  epochs: 50
+  batch_size: 32
+  validation_split: 0.2
+
+  # Learning rate settings
+  learning_rate: 0.001
+  learning_rate_schedule:
+    type: "exponential_decay"  # Options: constant, exponential_decay, cosine_decay, polynomial_decay
+    initial_learning_rate: 0.001
+    decay_steps: 1000
+    decay_rate: 0.96
+    staircase: false
+
+  # Optimizer configuration
+  optimizer:
+    type: "adam"
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-07
+    amsgrad: false
+
+  # Loss function
+  loss:
+    type: "categorical_crossentropy"
+    from_logits: false
+    label_smoothing: 0.1
+
+  # Metrics to track
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "top_3_accuracy"
+
+# Callbacks Configuration
+callbacks:
+  # Early stopping
+  early_stopping:
+    monitor: "val_loss"
+    patience: 10
+    restore_best_weights: true
+    verbose: 1
+    mode: "min"
+    min_delta: 0.001
+
+  # Model checkpointing
+  model_checkpoint:
+    filepath: "models/checkpoints/best_model_{epoch:02d}_{val_accuracy:.4f}.h5"
+    monitor: "val_accuracy"
+    save_best_only: true
+    save_weights_only: false
+    mode: "max"
+    verbose: 1
+
+  # Reduce learning rate on plateau
+  reduce_lr_on_plateau:
+    monitor: "val_loss"
+    factor: 0.5
+    patience: 5
+    min_lr: 1e-7
+    verbose: 1
+    mode: "min"
+    min_delta: 0.001
+    cooldown: 0
+
+  # TensorBoard logging
+  tensorboard:
+    log_dir: "logs/tensorboard"
+    histogram_freq: 1
+    write_graph: true
+    write_images: true
+    update_freq: "epoch"
+    profile_batch: 2
+    embeddings_freq: 0
+
+  # CSV logger
+  csv_logger:
+    filename: "logs/training_log.csv"
+    separator: ","
+    append: false
+
+  # Learning rate scheduler
+  lr_scheduler:
+    type: "cosine_restarts"  # Options: step, exponential, cosine_restarts
+    initial_learning_rate: 0.001
+    first_decay_steps: 1000
+    t_mul: 2.0
+    m_mul: 1.0
+    alpha: 0.0
+
+# Data Loading
+data_loading:
+  # Batch settings
+  batch_size: 32
+  shuffle: true
+
+  # Multiprocessing
+  use_multiprocessing: true
+  workers: 4
+  max_queue_size: 10
+
+  # Data augmentation
+  augmentation:
+    enabled: true
+    rotation_range: 20
+    width_shift_range: 0.2
+    height_shift_range: 0.2
+    shear_range: 0.2
+    zoom_range: 0.2
+    horizontal_flip: true
+    vertical_flip: false
+    brightness_range: [0.8, 1.2]
+    channel_shift_range: 0.1
+    fill_mode: "nearest"
+
+# Validation Settings
+validation:
+  # Validation frequency
+  validation_freq: 1
+
+  # Validation batch size
+  validation_batch_size: 32
+
+  # Validation steps
+  validation_steps: null  # Auto-calculate
+
+  # Validation data augmentation
+  validation_augmentation: false
+
+# Mixed Precision Training
+mixed_precision:
+  enabled: false  # Enable for GPU training
+  policy: "mixed_float16"
+
+# Distributed Training
+distributed:
+  enabled: false
+  strategy: "mirrored"  # Options: mirrored, multi_worker_mirrored, tpu
+
+# Hyperparameter Tuning
+hyperparameter_tuning:
+  # Tuning method
+  method: "optuna"  # Options: optuna, keras_tuner, manual
+
+  # Search space
+  search_space:
+    learning_rate:
+      type: "log_uniform"
+      low: 1e-5
+      high: 1e-2
+
+    batch_size:
+      type: "choice"
+      values: [16, 32, 64, 128]
+
+    dropout_rate:
+      type: "uniform"
+      low: 0.1
+      high: 0.7
+
+    l2_reg:
+      type: "log_uniform"
+      low: 1e-6
+      high: 1e-2
+
+  # Tuning settings
+  n_trials: 100
+  timeout: 3600  # 1 hour
+
+# Experiment Tracking
+experiment_tracking:
+  # MLflow settings
+  mlflow:
+    enabled: true
+    tracking_uri: "mlruns"
+    experiment_name: "FreshHarvest_Training"
+
+  # Weights & Biases
+  wandb:
+    enabled: false
+    project: "freshharvest"
+    entity: "your_team"
+
+# Model Saving
+model_saving:
+  # Save frequency
+  save_freq: "epoch"  # Options: epoch, batch, manual
+
+  # Save format
+  save_format: "h5"  # Options: h5, savedmodel, tf
+
+  # Save location
+  save_dir: "models/trained"
+
+  # Model versioning
+  versioning:
+    enabled: true
+    format: "YYYYMMDD_HHMMSS"
+
+# Resume Training
+resume_training:
+  enabled: false
+  checkpoint_path: null
+  load_optimizer_state: true

@@ -1,0 +1,197 @@
+# FreshHarvest Hyperparameters
+# Comprehensive hyperparameter configurations for model training
+
+# Optimizer Hyperparameters
+optimizer:
+  # Adam optimizer
+  adam:
+    learning_rate: 0.001
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-07
+    amsgrad: false
+
+  # SGD optimizer
+  sgd:
+    learning_rate: 0.01
+    momentum: 0.9
+    nesterov: true
+
+  # RMSprop optimizer
+  rmsprop:
+    learning_rate: 0.001
+    rho: 0.9
+    momentum: 0.0
+    epsilon: 1e-07
+
+# Learning Rate Schedules
+learning_rate_schedules:
+  # Exponential decay
+  exponential_decay:
+    initial_learning_rate: 0.001
+    decay_steps: 1000
+    decay_rate: 0.96
+    staircase: false
+
+  # Cosine decay
+  cosine_decay:
+    initial_learning_rate: 0.001
+    decay_steps: 10000
+    alpha: 0.0
+
+  # Polynomial decay
+  polynomial_decay:
+    initial_learning_rate: 0.001
+    decay_steps: 10000
+    end_learning_rate: 0.0001
+    power: 1.0
+
+  # Step decay
+  step_decay:
+    initial_learning_rate: 0.001
+    drop_rate: 0.5
+    epochs_drop: 10
+
+# Model Architecture Hyperparameters
+model_architecture:
+  # CNN layers
+  conv_layers:
+    num_layers: 4
+    filters: [32, 64, 128, 256]
+    kernel_sizes: [3, 3, 3, 3]
+    strides: [1, 1, 1, 1]
+    padding: "same"
+
+  # Dense layers
+  dense_layers:
+    hidden_units: [512, 256]
+    output_units: 16
+
+  # Activation functions
+  activations:
+    conv_activation: "relu"
+    dense_activation: "relu"
+    output_activation: "softmax"
+
+# Regularization Hyperparameters
+regularization:
+  # Dropout rates
+  dropout:
+    conv_dropout: 0.1
+    dense_dropout: 0.5
+    input_dropout: 0.0
+
+  # L1/L2 regularization
+  l1_regularization: 0.0001
+  l2_regularization: 0.0001
+
+  # Batch normalization
+  batch_normalization:
+    momentum: 0.99
+    epsilon: 0.001
+    center: true
+    scale: true
+
+  # Early stopping
+  early_stopping:
+    patience: 10
+    min_delta: 0.001
+    restore_best_weights: true
+
+# Training Hyperparameters
+training:
+  # Basic parameters
+  epochs: 50
+  batch_size: 32
+  validation_split: 0.2
+
+  # Loss function
+  loss_function: "categorical_crossentropy"
+  label_smoothing: 0.1
+
+  # Metrics
+  metrics: ["accuracy", "precision", "recall"]
+
+  # Callbacks
+  callbacks:
+    reduce_lr_patience: 5
+    reduce_lr_factor: 0.5
+    reduce_lr_min_lr: 1e-7
+
+# Data Augmentation Hyperparameters
+data_augmentation:
+  # Geometric transformations
+  rotation_range: 20
+  width_shift_range: 0.2
+  height_shift_range: 0.2
+  shear_range: 0.2
+  zoom_range: 0.2
+
+  # Flipping
+  horizontal_flip: true
+  vertical_flip: false
+
+  # Color augmentation
+  brightness_range: [0.8, 1.2]
+  contrast_range: [0.8, 1.2]
+  saturation_range: [0.8, 1.2]
+
+  # Advanced augmentation
+  cutout_probability: 0.2
+  mixup_alpha: 0.2
+
+# Hyperparameter Search Spaces
+search_spaces:
+  # Learning rate search
+  learning_rate:
+    type: "log_uniform"
+    low: 1e-5
+    high: 1e-1
+
+  # Batch size search
+  batch_size:
+    type: "choice"
+    values: [16, 32, 64, 128]
+
+  # Dropout rate search
+  dropout_rate:
+    type: "uniform"
+    low: 0.1
+    high: 0.7
+
+  # L2 regularization search
+  l2_reg:
+    type: "log_uniform"
+    low: 1e-6
+    high: 1e-2
+
+  # Number of filters search
+  num_filters:
+    type: "choice"
+    values: [[16, 32, 64], [32, 64, 128], [64, 128, 256]]
+
+  # Dense units search
+  dense_units:
+    type: "choice"
+    values: [128, 256, 512, 1024]
+
+# Best Known Hyperparameters
+best_hyperparameters:
+  # From previous experiments
+  lightweight_cnn:
+    learning_rate: 0.001
+    batch_size: 32
+    dropout_rate: 0.3
+    l2_reg: 0.0001
+
+  improved_cnn:
+    learning_rate: 0.0005
+    batch_size: 64
+    dropout_rate: 0.4
+    l2_reg: 0.0005
+
+  basic_cnn:
+    learning_rate: 0.002
+    batch_size: 32
+    dropout_rate: 0.2
+    l2_reg: 0.0001
