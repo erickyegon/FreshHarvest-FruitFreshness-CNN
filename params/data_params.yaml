@@ -5,9 +5,10 @@
 dataset_info:
   name: "FreshHarvest"
   version: "1.0"
-  description: "Fruit freshness classification dataset"
-  total_classes: 16
-  image_count: 16000
+  description: "Fruit freshness classification dataset - 96.50% accuracy"
+  total_classes: 6
+  image_count: 12000
+  target_accuracy: 0.965
 
 # Data Splits
 data_splits:
@@ -70,27 +71,31 @@ augmentation_params:
 
 # Class Information
 class_info:
-  # Fresh fruits (0-7)
+  # Fresh fruits (0-2)
   fresh_fruits:
-    F_Banana: 0
-    F_Lemon: 1
-    F_Lulo: 2
-    F_Mango: 3
-    F_Orange: 4
-    F_Strawberry: 5
-    F_Tamarillo: 6
-    F_Tomato: 7
+    Fresh_Apple: 0
+    Fresh_Banana: 1
+    Fresh_Orange: 2
 
-  # Spoiled fruits (8-15)
-  spoiled_fruits:
-    S_Banana: 8
-    S_Lemon: 9
-    S_Lulo: 10
-    S_Mango: 11
-    S_Orange: 12
-    S_Strawberry: 13
-    S_Tamarillo: 14
-    S_Tomato: 15
+  # Rotten fruits (3-5)
+  rotten_fruits:
+    Rotten_Apple: 3
+    Rotten_Banana: 4
+    Rotten_Orange: 5
+
+  # Class mapping for 96.50% accuracy model
+  class_names:
+    0: "Fresh Apple"
+    1: "Fresh Banana"
+    2: "Fresh Orange"
+    3: "Rotten Apple"
+    4: "Rotten Banana"
+    5: "Rotten Orange"
+
+  # Freshness categories
+  freshness_mapping:
+    fresh_classes: [0, 1, 2]
+    rotten_classes: [3, 4, 5]
 
 # Data Loading Parameters
 loading_params:

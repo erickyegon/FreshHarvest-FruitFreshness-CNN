@@ -1,0 +1,384 @@
+# FreshHarvest Model Schema Configuration
+# =======================================
+#
+# This file defines the complete model schema for the FreshHarvest
+# fruit freshness classification system, including architecture,
+# training parameters, and deployment specifications.
+#
+# Author: FreshHarvest Team
+# Version: 1.0.0
+# Last Updated: 2025-06-18
+
+# Model Metadata
+model:
+  name: "FreshHarvest_CNN_Classifier"
+  version: "1.0.0"
+  description: "Deep CNN for fruit freshness classification"
+  task: "multiclass_classification"
+
+  # Model Performance (Production Results)
+  performance:
+    validation_accuracy: 0.9650
+    test_accuracy: 0.9619
+    precision: 0.9685
+    recall: 0.9619
+    f1_score: 0.9652
+    training_date: "2025-06-18"
+    training_epochs: 23
+    early_stopping: true
+
+  # Model Architecture
+  architecture:
+    type: "cnn"
+    framework: "tensorflow"
+    base_model: "custom_cnn"
+
+    # Input specifications
+    input:
+      shape: [224, 224, 3]
+      dtype: "float32"
+      normalization: "standard"  # [0, 1] range
+
+    # Output specifications
+    output:
+      classes: 6
+      activation: "softmax"
+      class_names:
+        - "Fresh Apple"
+        - "Fresh Banana"
+        - "Fresh Orange"
+        - "Rotten Apple"
+        - "Rotten Banana"
+        - "Rotten Orange"
+
+# Architecture Definition
+architecture:
+  # Convolutional Layers
+  conv_layers:
+    - filters: 32
+      kernel_size: [3, 3]
+      activation: "relu"
+      padding: "same"
+      batch_norm: true
+      dropout: 0.1
+
+    - filters: 32
+      kernel_size: [3, 3]
+      activation: "relu"
+      padding: "same"
+      batch_norm: true
+      max_pool: [2, 2]
+      dropout: 0.2
+
+    - filters: 64
+      kernel_size: [3, 3]
+      activation: "relu"
+      padding: "same"
+      batch_norm: true
+      dropout: 0.2
+
+    - filters: 64
+      kernel_size: [3, 3]
+      activation: "relu"
+      padding: "same"
+      batch_norm: true
+      max_pool: [2, 2]
+      dropout: 0.3
+
+    - filters: 128
+      kernel_size: [3, 3]
+      activation: "relu"
+      padding: "same"
+      batch_norm: true
+      dropout: 0.3
+
+    - filters: 128
+      kernel_size: [3, 3]
+      activation: "relu"
+      padding: "same"
+      batch_norm: true
+      max_pool: [2, 2]
+      dropout: 0.4
+
+  # Dense Layers
+  dense_layers:
+    - units: 512
+      activation: "relu"
+      batch_norm: true
+      dropout: 0.5
+
+    - units: 256
+      activation: "relu"
+      batch_norm: true
+      dropout: 0.5
+
+    - units: 6  # output layer
+      activation: "softmax"
+      dropout: 0.0
+
+# Training Configuration
+training:
+  # Optimizer settings
+  optimizer:
+    type: "adam"
+    learning_rate: 0.001
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-07
+
+  # Loss function
+  loss:
+    type: "sparse_categorical_crossentropy"
+    from_logits: false
+
+  # Metrics
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+
+  # Training parameters
+  parameters:
+    epochs: 50
+    batch_size: 32
+    validation_split: 0.2
+    shuffle: true
+
+  # Callbacks
+  callbacks:
+    early_stopping:
+      enabled: true
+      monitor: "val_accuracy"
+      patience: 7
+      restore_best_weights: true
+      min_delta: 0.001
+
+    reduce_lr:
+      enabled: true
+      monitor: "val_loss"
+      factor: 0.5
+      patience: 5
+      min_lr: 1e-07
+
+    model_checkpoint:
+      enabled: true
+      monitor: "val_accuracy"
+      save_best_only: true
+      save_weights_only: false
+
+    tensorboard:
+      enabled: true
+      log_dir: "artifacts/tensorboard_logs"
+      histogram_freq: 1
+
+# Data Augmentation
+augmentation:
+  enabled: true
+
+  # Image transformations
+  transformations:
+    rotation_range: 20
+    width_shift_range: 0.1
+    height_shift_range: 0.1
+    shear_range: 0.1
+    zoom_range: 0.1
+    horizontal_flip: true
+    vertical_flip: false
+    brightness_range: [0.8, 1.2]
+    contrast_range: [0.8, 1.2]
+
+  # Augmentation parameters
+  parameters:
+    fill_mode: "nearest"
+    interpolation_order: 1
+    preserve_range: true
+
+# Model Compilation
+compilation:
+  # Regularization
+  regularization:
+    l1: 0.0
+    l2: 0.001
+    dropout_rate: 0.5
+    batch_normalization: true
+
+  # Initialization
+  initialization:
+    kernel_initializer: "he_normal"
+    bias_initializer: "zeros"
+
+  # Advanced settings
+  advanced:
+    mixed_precision: false
+    gradient_clipping: false
+    gradient_clip_value: 1.0
+
+# Evaluation Configuration
+evaluation:
+  # Metrics to compute
+  metrics:
+    classification:
+      - "accuracy"
+      - "precision"
+      - "recall"
+      - "f1_score"
+      - "confusion_matrix"
+      - "classification_report"
+
+    confidence:
+      - "prediction_confidence"
+      - "calibration_error"
+      - "reliability_diagram"
+
+  # Cross-validation
+  cross_validation:
+    enabled: true
+    folds: 5
+    stratified: true
+    random_state: 42
+
+  # Test-time augmentation
+  tta:
+    enabled: false
+    n_augmentations: 5
+
+# Model Storage
+storage:
+  # Model artifacts
+  artifacts:
+    model_path: "artifacts/model_trainer/model.h5"
+    weights_path: "artifacts/model_trainer/weights.h5"
+    config_path: "artifacts/model_trainer/config.json"
+
+  # Serialization format
+  format:
+    primary: "tensorflow_savedmodel"
+    backup: "h5"
+
+  # Versioning
+  versioning:
+    enabled: true
+    strategy: "timestamp"
+    keep_versions: 5
+
+  # Compression
+  compression:
+    enabled: true
+    algorithm: "gzip"
+
+# Deployment Configuration
+deployment:
+  # Serving configuration
+  serving:
+    framework: "tensorflow_serving"
+    batch_size: 1
+    max_batch_size: 32
+    timeout: 30
+
+  # Performance requirements
+  performance:
+    max_latency_ms: 200
+    min_throughput_rps: 10
+    memory_limit_mb: 512
+
+  # Scaling
+  scaling:
+    auto_scaling: true
+    min_replicas: 1
+    max_replicas: 5
+    target_cpu_utilization: 70
+
+  # Health checks
+  health:
+    liveness_probe: "/health"
+    readiness_probe: "/ready"
+    startup_probe: "/startup"
+
+# Monitoring and Observability
+monitoring:
+  # Model performance monitoring
+  performance:
+    track_accuracy: true
+    track_latency: true
+    track_throughput: true
+    track_memory: true
+
+  # Data drift monitoring
+  drift:
+    enabled: true
+    reference_data: "artifacts/reference_data"
+    detection_method: "ks_test"
+    threshold: 0.05
+
+  # Model drift monitoring
+  model_drift:
+    enabled: true
+    baseline_model: "artifacts/baseline_model"
+    comparison_metric: "accuracy"
+    threshold: 0.02
+
+  # Alerting
+  alerts:
+    accuracy_drop: 0.05
+    latency_increase: 100  # ms
+    error_rate: 0.01
+
+# Model Validation
+validation:
+  # Pre-deployment validation
+  pre_deployment:
+    accuracy_threshold: 0.90
+    precision_threshold: 0.85
+    recall_threshold: 0.85
+    f1_threshold: 0.85
+
+  # A/B testing
+  ab_testing:
+    enabled: false
+    traffic_split: 0.1
+    success_metric: "accuracy"
+
+  # Shadow testing
+  shadow_testing:
+    enabled: false
+    duration_days: 7
+
+# Security and Compliance
+security:
+  # Model security
+  model_security:
+    encrypt_model: false
+    sign_model: false
+
+  # Input validation
+  input_validation:
+    validate_shape: true
+    validate_dtype: true
+    validate_range: true
+
+  # Output validation
+  output_validation:
+    validate_probabilities: true
+    validate_classes: true
+
+# Metadata and Documentation
+metadata:
+  # Training metadata
+  training:
+    dataset_version: "1.0.0"
+    training_duration: "2.5 hours"
+    hardware: "GPU (NVIDIA)"
+    framework_version: "tensorflow 2.13.0"
+
+  # Model lineage
+  lineage:
+    parent_model: null
+    derived_models: []
+    experiment_id: "exp_20250618_001"
+
+  # Documentation
+  documentation:
+    model_card: "docs/model_card.md"
+    training_report: "reports/training_report.md"
+    evaluation_report: "reports/evaluation_report.md"

@@ -1,0 +1,134 @@
+# FreshHarvest Monitoring Dashboard Dockerfile
+# For monitoring 96.50% accuracy target
+
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+ENV STREAMLIT_SERVER_PORT=8502
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy monitoring code
+COPY monitoring/ ./monitoring/
+COPY src/ ./src/
+COPY config/ ./config/
+
+# Create monitoring dashboard
+COPY <<EOF ./monitoring_dashboard.py
+import streamlit as st
+import sys
+from pathlib import Path
+
+# Add project root to path
+project_root = Path(__file__).parent
+sys.path.append(str(project_root))
+
+from monitoring.data_drift_monitor import create_data_drift_monitor
+from monitoring.model_monitor import create_model_monitor
+
+st.set_page_config(
+    page_title="FreshHarvest Monitoring Dashboard",
+    page_icon="📊",
+    layout="wide"
+)
+
+st.title("📊 FreshHarvest Monitoring Dashboard")
+st.subheader("96.50% Accuracy Target Monitoring")
+
+# Initialize monitors
+@st.cache_resource
+def get_monitors():
+    drift_monitor = create_data_drift_monitor()
+    model_monitor = create_model_monitor()
+    return drift_monitor, model_monitor
+
+drift_monitor, model_monitor = get_monitors()
+
+# Sidebar
+st.sidebar.title("Monitoring Controls")
+refresh_interval = st.sidebar.selectbox("Refresh Interval", [30, 60, 120, 300])
+auto_refresh = st.sidebar.checkbox("Auto Refresh", value=True)
+
+# Main dashboard
+col1, col2 = st.columns(2)
+
+with col1:
+    st.header("🎯 Model Performance")
+    metrics = model_monitor.get_current_metrics()
+    
+    # Key metrics
+    st.metric("Current Accuracy", f"{metrics.get('accuracy', 0):.4f}", 
+              f"{metrics.get('accuracy_vs_target', 0):+.4f}")
+    st.metric("Target Accuracy", "96.50%")
+    st.metric("Performance Status", metrics.get('performance_status', 'unknown').upper())
+    
+    # Alerts
+    alerts = model_monitor.get_alerts(limit=5)
+    if alerts:
+        st.subheader("🚨 Recent Alerts")
+        for alert in alerts:
+            severity_color = "🔴" if alert['severity'] == 'critical' else "🟡"
+            st.write(f"{severity_color} {alert['message']}")
+
+with col2:
+    st.header("📊 Data Drift Status")
+    
+    # Drift report
+    drift_report = drift_monitor.generate_drift_report(time_window_hours=24)
+    
+    if 'error' not in drift_report:
+        st.metric("Drift Detection Rate", 
+                  f"{drift_report['summary']['drift_detection_rate']:.2%}")
+        st.metric("Total Batches Monitored", 
+                  drift_report['summary']['total_batches_monitored'])
+        st.metric("System Health", 
+                  drift_report['system_health']['status'])
+
+# Performance summary
+st.header("📈 Performance Summary")
+performance_summary = model_monitor.get_performance_summary(time_window_hours=1)
+
+if 'error' not in performance_summary:
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Hourly Accuracy", f"{performance_summary.get('accuracy', 0):.4f}")
+    with col2:
+        st.metric("Total Predictions", performance_summary.get('total_predictions', 0))
+    with col3:
+        st.metric("Performance Grade", performance_summary.get('performance_grade', 'N/A'))
+    with col4:
+        st.metric("Target Achieved", 
+                  "✅" if performance_summary.get('target_achieved', False) else "❌")
+
+# Auto refresh
+if auto_refresh:
+    st.rerun()
+EOF
+
+# Expose port
+EXPOSE 8502
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8502/_stcore/health || exit 1
+
+# Run the monitoring dashboard
+CMD ["streamlit", "run", "monitoring_dashboard.py", "--server.port=8502", "--server.address=0.0.0.0"]

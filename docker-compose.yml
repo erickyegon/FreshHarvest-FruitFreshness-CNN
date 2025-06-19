@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # FreshHarvest Web Application
+  freshharvest-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: freshharvest-app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./artifacts:/app/artifacts:ro  # Read-only model artifacts
+      - ./logs:/app/logs              # Application logs
+      - ./monitoring/logs:/app/monitoring/logs  # Monitoring logs
+      - ./data:/app/data:ro           # Read-only data access
+    environment:
+      - PYTHONPATH=/app
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - MODEL_TARGET_ACCURACY=0.965
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - freshharvest-network
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: freshharvest-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - freshharvest-network
+    command: redis-server --appendonly yes
+
+  # Monitoring Dashboard (optional)
+  monitoring:
+    build:
+      context: .
+      dockerfile: Dockerfile.monitoring
+    container_name: freshharvest-monitoring
+    ports:
+      - "8502:8502"
+    volumes:
+      - ./monitoring/logs:/app/monitoring/logs
+      - ./logs:/app/logs:ro
+    environment:
+      - PYTHONPATH=/app
+      - STREAMLIT_SERVER_PORT=8502
+    restart: unless-stopped
+    depends_on:
+      - freshharvest-app
+    networks:
+      - freshharvest-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  freshharvest-network:
+    driver: bridge

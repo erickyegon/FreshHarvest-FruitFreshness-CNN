@@ -1,0 +1,236 @@
+# FreshHarvest Data Schema Configuration
+# =====================================
+#
+# This file defines the complete data schema for the FreshHarvest
+# fruit freshness classification system, including data structure,
+# validation rules, and processing parameters.
+#
+# Author: FreshHarvest Team
+# Version: 1.0.0
+# Last Updated: 2025-06-18
+
+# Dataset Configuration
+dataset:
+  name: "FreshHarvest_FruitFreshness"
+  version: "1.0.0"
+  description: "Comprehensive fruit freshness classification dataset"
+
+  # Data Sources
+  sources:
+    primary: "artifacts/data_ingestion/fruit_dataset"
+    backup: "artifacts/data_ingestion/backup"
+    external: "https://www.kaggle.com/datasets/fruit-freshness"
+
+  # Dataset Structure
+  structure:
+    train_split: 0.7
+    validation_split: 0.15
+    test_split: 0.15
+
+    directories:
+      - "train"
+      - "validation"
+      - "test"
+
+    # Class Definitions
+    classes:
+      fresh_apple: 0
+      fresh_banana: 1
+      fresh_orange: 2
+      rotten_apple: 3
+      rotten_banana: 4
+      rotten_orange: 5
+
+    class_mapping:
+      0: "Fresh Apple"
+      1: "Fresh Banana"
+      2: "Fresh Orange"
+      3: "Rotten Apple"
+      4: "Rotten Banana"
+      5: "Rotten Orange"
+
+# Image Specifications
+image:
+  # Target dimensions for model input
+  target_size: [224, 224]
+  channels: 3
+  color_mode: "rgb"
+
+  # Supported formats
+  supported_formats:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+    - ".bmp"
+    - ".tiff"
+
+  # Quality requirements
+  quality:
+    min_resolution: [100, 100]
+    max_resolution: [4000, 4000]
+    min_file_size: 1024  # bytes
+    max_file_size: 10485760  # 10MB
+
+  # Preprocessing parameters
+  preprocessing:
+    normalization: "standard"  # standard, minmax, imagenet
+    resize_method: "bilinear"
+    maintain_aspect_ratio: false
+
+    # Data augmentation settings
+    augmentation:
+      enabled: true
+      rotation_range: 20
+      width_shift_range: 0.1
+      height_shift_range: 0.1
+      horizontal_flip: true
+      vertical_flip: false
+      zoom_range: 0.1
+      brightness_range: [0.8, 1.2]
+      contrast_range: [0.8, 1.2]
+
+# Data Validation Rules
+validation:
+  # Structure validation
+  structure:
+    require_all_splits: true
+    require_class_consistency: true
+    min_images_per_class: 10
+    max_class_imbalance: 0.5
+
+  # Quality validation
+  quality:
+    check_corruption: true
+    check_duplicates: true
+    check_format: true
+    check_dimensions: true
+    sample_size: 100  # for quality checks
+
+  # Distribution validation
+  distribution:
+    check_balance: true
+    balance_threshold: 0.3
+    min_samples_per_split: 5
+
+# Feature Extraction Configuration
+features:
+  # Traditional computer vision features
+  traditional:
+    enabled: true
+
+    # Color features
+    color:
+      rgb_statistics: true
+      hsv_statistics: true
+      lab_statistics: true
+      color_ratios: true
+      dominant_colors: true
+
+    # Texture features
+    texture:
+      lbp_features: true
+      glcm_features: true
+      edge_features: true
+      gradient_features: true
+      gabor_filters: false
+
+    # Shape features
+    shape:
+      contour_features: true
+      moment_features: true
+      geometric_features: true
+      fourier_descriptors: false
+
+  # Deep learning features
+  deep:
+    enabled: true
+    model: "resnet50"  # resnet50, vgg16, mobilenet
+    layer: "avg_pool"
+    freeze_weights: true
+
+# Data Processing Pipeline
+pipeline:
+  # Ingestion stage
+  ingestion:
+    batch_size: 32
+    parallel_workers: 4
+    cache_processed: true
+
+  # Preprocessing stage
+  preprocessing:
+    batch_size: 64
+    normalize_batch: true
+    apply_augmentation: true
+
+  # Validation stage
+  validation:
+    run_on_ingestion: true
+    generate_reports: true
+    fail_on_critical: true
+
+# Storage Configuration
+storage:
+  # Raw data storage
+  raw_data:
+    path: "artifacts/data_ingestion"
+    format: "directory_structure"
+    backup_enabled: true
+
+  # Processed data storage
+  processed_data:
+    path: "artifacts/data_preprocessing"
+    format: "numpy_arrays"
+    compression: "gzip"
+
+  # Feature storage
+  features:
+    path: "artifacts/feature_extraction"
+    format: "hdf5"
+    chunk_size: 1000
+
+  # Metadata storage
+  metadata:
+    path: "artifacts/metadata"
+    format: "json"
+    include_statistics: true
+
+# Data Monitoring
+monitoring:
+  # Data drift detection
+  drift_detection:
+    enabled: true
+    reference_window: 1000
+    detection_window: 100
+    threshold: 0.05
+
+  # Quality monitoring
+  quality_monitoring:
+    enabled: true
+    check_frequency: "daily"
+    alert_threshold: 0.95
+
+  # Performance tracking
+  performance_tracking:
+    track_processing_time: true
+    track_memory_usage: true
+    track_error_rates: true
+
+# Compliance and Security
+compliance:
+  # Data privacy
+  privacy:
+    anonymize_metadata: false
+    remove_exif: true
+    hash_filenames: false
+
+  # Data retention
+  retention:
+    raw_data_days: 365
+    processed_data_days: 180
+    logs_days: 90
+
+  # Access control
+  access:
+    require_authentication: false
+    log_access: true
+    encrypt_storage: false

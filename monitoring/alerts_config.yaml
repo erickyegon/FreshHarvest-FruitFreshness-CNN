@@ -1,17 +1,27 @@
 # FreshHarvest Monitoring Alerts Configuration
 # Comprehensive alerting rules for production monitoring
+# Target Accuracy: 96.50%
 
 # Alert Configuration
 alerts:
   # Model Performance Alerts
   model_performance:
-    # Accuracy degradation
+    # Accuracy degradation from 96.50% target
     accuracy_degradation:
       enabled: true
-      threshold: 0.05  # 5% drop in accuracy
+      threshold: 0.95   # Alert if accuracy drops below 95%
+      target_accuracy: 0.965  # 96.50% target
       window: "1h"
+      severity: "critical"
+      description: "Model accuracy dropped below 95% (target: 96.50%)"
+
+    # Warning accuracy drop
+    accuracy_warning:
+      enabled: true
+      threshold: 0.96   # Alert if accuracy drops below 96%
+      window: "30m"
       severity: "warning"
-      description: "Model accuracy has dropped significantly"
+      description: "Model accuracy below 96% (target: 96.50%)"
 
     # High error rate
     high_error_rate:

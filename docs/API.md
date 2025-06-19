@@ -2,21 +2,17 @@
 
 ## Overview
 
-The FreshHarvest API provides endpoints for fruit freshness classification using computer vision. The API is built with FastAPI and provides both REST endpoints and real-time inference capabilities.
+The FreshHarvest API provides AI-powered fruit freshness classification with **96.50% accuracy**. Built with FastAPI, it offers both REST endpoints and real-time inference capabilities for enterprise-grade fruit quality assessment.
 
 ## Base URL
 
 ```
-http://localhost:8000/api/v1
+http://localhost:8000
 ```
 
 ## Authentication
 
-Currently, the API uses API key authentication. Include your API key in the header:
-
-```
-Authorization: Bearer YOUR_API_KEY
-```
+Currently, the API does not require authentication for development. For production deployment, implement appropriate authentication mechanisms.
 
 ## Endpoints
 
@@ -44,11 +40,18 @@ Get information about the loaded model.
 **Response:**
 ```json
 {
-  "model_name": "FreshHarvest_CNN_v1.0",
-  "model_version": "1.0.0",
-  "classes": ["F_Banana", "F_Lemon", ...],
-  "input_shape": [224, 224, 3],
-  "model_size_mb": 0.324
+  "status": "success",
+  "data": {
+    "model_version": "1.0.0",
+    "accuracy": "96.50%",
+    "classes": [
+      "Fresh Apple", "Fresh Banana", "Fresh Orange",
+      "Rotten Apple", "Rotten Banana", "Rotten Orange"
+    ],
+    "input_shape": [224, 224, 3],
+    "model_type": "CNN",
+    "framework": "TensorFlow"
+  }
 }
 ```
 

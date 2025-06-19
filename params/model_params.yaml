@@ -1,0 +1,250 @@
+# FreshHarvest Model Parameters
+# =============================
+#
+# Configuration parameters for the FreshHarvest fruit freshness
+# classification model architecture and training.
+#
+# Author: FreshHarvest Team
+# Version: 1.0.0
+# Target Accuracy: 96.50%
+
+# Model Architecture Parameters
+model_architecture:
+  # Base model configuration
+  base_model: "EfficientNetB0"  # Pre-trained backbone
+  input_shape: [224, 224, 3]    # Input image dimensions
+  num_classes: 6                # Number of fruit freshness classes
+
+  # Transfer learning settings
+  include_top: false            # Exclude top classification layer
+  weights: "imagenet"           # Pre-trained weights
+  pooling: "avg"               # Global pooling type
+
+  # Custom head configuration
+  dropout_rate: 0.3            # Dropout for regularization
+  dense_units: 512             # Dense layer units
+  activation: "relu"           # Activation function
+  final_activation: "softmax"  # Final layer activation
+
+# Model Compilation Parameters
+compilation:
+  # Optimizer settings
+  optimizer:
+    type: "Adam"
+    learning_rate: 0.001
+    beta_1: 0.9
+    beta_2: 0.999
+    epsilon: 1e-07
+
+  # Loss function
+  loss: "categorical_crossentropy"
+
+  # Metrics to track
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+
+# Model Training Parameters
+training:
+  # Basic training settings
+  epochs: 50
+  batch_size: 32
+  validation_split: 0.2
+
+  # Early stopping configuration
+  early_stopping:
+    monitor: "val_accuracy"
+    patience: 10
+    restore_best_weights: true
+    min_delta: 0.001
+    mode: "max"
+
+  # Learning rate scheduling
+  lr_scheduler:
+    type: "ReduceLROnPlateau"
+    monitor: "val_loss"
+    factor: 0.5
+    patience: 5
+    min_lr: 1e-07
+    verbose: 1
+
+  # Model checkpointing
+  model_checkpoint:
+    monitor: "val_accuracy"
+    save_best_only: true
+    save_weights_only: false
+    mode: "max"
+    verbose: 1
+
+# Data Augmentation Parameters
+data_augmentation:
+  # Image augmentation settings
+  rotation_range: 20
+  width_shift_range: 0.1
+  height_shift_range: 0.1
+  shear_range: 0.1
+  zoom_range: 0.1
+  horizontal_flip: true
+  vertical_flip: false
+  fill_mode: "nearest"
+
+  # Normalization
+  rescale: 0.00392156862745098  # 1/255
+
+  # Advanced augmentations
+  brightness_range: [0.8, 1.2]
+  channel_shift_range: 0.1
+
+# Model Evaluation Parameters
+evaluation:
+  # Test data configuration
+  test_batch_size: 32
+
+  # Metrics thresholds
+  accuracy_threshold: 0.965     # Target 96.50% accuracy
+  confidence_threshold: 0.5
+
+  # Cross-validation settings
+  cv_folds: 5
+  stratified: true
+
+  # Statistical tests
+  statistical_tests:
+    confidence_level: 0.95
+    bootstrap_samples: 1000
+    permutation_samples: 1000
+
+# Model Deployment Parameters
+deployment:
+  # Model serving configuration
+  model_format: "h5"           # Saved model format
+  quantization: false          # Model quantization
+
+  # Inference settings
+  batch_inference_size: 32
+  max_inference_time_ms: 100
+
+  # API configuration
+  api_timeout_seconds: 30
+  max_batch_size: 10
+
+  # Performance monitoring
+  performance_logging: true
+  metrics_collection: true
+
+# Hardware Configuration
+hardware:
+  # GPU settings
+  use_gpu: true
+  gpu_memory_growth: true
+  mixed_precision: false
+
+  # CPU settings
+  cpu_threads: 4
+
+  # Memory management
+  memory_limit_gb: 8
+  cache_size_gb: 2
+
+# Class Configuration
+classes:
+  # Fruit freshness classes
+  class_names:
+    0: "Fresh Apple"
+    1: "Fresh Banana"
+    2: "Fresh Orange"
+    3: "Rotten Apple"
+    4: "Rotten Banana"
+    5: "Rotten Orange"
+
+  # Class weights (for imbalanced data)
+  class_weights:
+    0: 1.0  # Fresh Apple
+    1: 1.0  # Fresh Banana
+    2: 1.0  # Fresh Orange
+    3: 1.1  # Rotten Apple (slightly higher weight)
+    4: 1.1  # Rotten Banana
+    5: 1.1  # Rotten Orange
+
+  # Freshness mapping
+  freshness_mapping:
+    fresh_classes: [0, 1, 2]    # Fresh fruit classes
+    rotten_classes: [3, 4, 5]   # Rotten fruit classes
+
+# Performance Targets
+performance_targets:
+  # Accuracy targets
+  training_accuracy: 0.98      # 98% training accuracy
+  validation_accuracy: 0.965   # 96.50% validation accuracy
+  test_accuracy: 0.96          # 96% test accuracy
+
+  # Speed targets
+  inference_time_ms: 50        # Max 50ms inference time
+  throughput_images_per_sec: 20 # Min 20 images/second
+
+  # Resource targets
+  model_size_mb: 50            # Max 50MB model size
+  memory_usage_mb: 2048        # Max 2GB memory usage
+
+  # Quality targets
+  precision: 0.96              # 96% precision
+  recall: 0.96                 # 96% recall
+  f1_score: 0.96               # 96% F1-score
+
+# Monitoring Configuration
+monitoring:
+  # Performance monitoring
+  track_accuracy: true
+  track_inference_time: true
+  track_confidence_scores: true
+  track_class_distribution: true
+
+  # Alert thresholds
+  accuracy_alert_threshold: 0.95   # Alert if accuracy drops below 95%
+  inference_time_alert_ms: 100     # Alert if inference time > 100ms
+  confidence_alert_threshold: 0.7  # Alert if avg confidence < 70%
+
+  # Logging configuration
+  log_predictions: true
+  log_errors: true
+  log_performance_metrics: true
+
+  # Data drift detection
+  drift_detection: true
+  drift_threshold: 0.1
+  reference_window_size: 1000
+
+# Experiment Tracking
+experiment:
+  # MLflow configuration
+  experiment_name: "FreshHarvest_Classification"
+  run_name: "EfficientNetB0_96.5_accuracy"
+
+  # Tracking parameters
+  track_hyperparameters: true
+  track_metrics: true
+  track_artifacts: true
+  track_model: true
+
+  # Tags
+  tags:
+    model_type: "CNN"
+    framework: "TensorFlow"
+    accuracy: "96.50%"
+    version: "1.0.0"
+
+# Reproducibility
+reproducibility:
+  # Random seeds
+  random_seed: 42
+  numpy_seed: 42
+  tensorflow_seed: 42
+
+  # Deterministic operations
+  deterministic_ops: true
+
+  # Environment
+  python_version: "3.9"
+  tensorflow_version: "2.13.0"
