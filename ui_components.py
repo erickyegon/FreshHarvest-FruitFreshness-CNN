@@ -275,12 +275,12 @@ def create_prediction_display(result, model_info=None):
     """Create a professional prediction results display."""
     if not result:
         return
-    
+
     # Determine result styling
     result_class = "result-fresh" if result['condition'] == "Fresh" else "result-spoiled"
     condition_icon = "✅" if result['condition'] == "Fresh" else "⚠️"
     confidence_color = "#28a745" if result['confidence'] > 0.8 else "#ffc107" if result['confidence'] > 0.6 else "#dc3545"
-    
+
     # Model info header
     model_status = ""
     if model_info:
@@ -289,14 +289,14 @@ def create_prediction_display(result, model_info=None):
             <strong>🏆 {model_info}</strong>
         </div>
         """
-    
+
     st.markdown(f"""
     <div class="prediction-container">
         <div class="prediction-header">
             <h3>🔍 AI Analysis Results</h3>
             {model_status}
         </div>
-        
+
         <div class="prediction-result {result_class}">
             <div style="flex: 1;">
                 <h4>🍎 Fruit Type</h4>
